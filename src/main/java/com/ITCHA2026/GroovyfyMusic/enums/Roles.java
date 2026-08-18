@@ -1,4 +1,6 @@
 package com.ITCHA2026.GroovyfyMusic.enums;
 
-public class prueba {
+public enum Roles {
+    USUARIO,
+    ARTISTA
 }
