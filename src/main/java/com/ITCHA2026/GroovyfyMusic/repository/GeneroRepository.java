@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface GeneroRepository extends JpaRepository<Genero, Integer> {
 
-    boolean existByNombre(String nombre);
-    boolean existByNombreAndIdnot(String nombre, Integer id);
+    boolean existsByNombre(String nombre);
+    boolean existsByNombreAndIdnot(String nombre, Integer id);
 }
