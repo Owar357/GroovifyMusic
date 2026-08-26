@@ -40,9 +40,9 @@ public class Usuario implements Serializable {
       @Column(name = "fecha_nacimiento", nullable = false )
       private LocalDate fechaNacimiento;
 
-      @ManyToOne(fetch = FetchType.LAZY)
-      @JoinColumn(name = "rol_id", nullable = false)
-      private Role rol;
+            @ManyToOne(fetch = FetchType.LAZY)
+            @JoinColumn(name = "rol_id", nullable = false)
+            private Role rol;
 
       @CreationTimestamp
       @Column(name = "creado_en",nullable = false, updatable = false)

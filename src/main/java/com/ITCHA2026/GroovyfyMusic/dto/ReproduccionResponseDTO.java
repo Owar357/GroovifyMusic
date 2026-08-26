@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class ReproduccionDTO {
+public class ReproduccionResponseDTO {
     private  Integer id;
     private UsuarioResponseDTO usuario;
     private CancionResponseDTO cancion;
