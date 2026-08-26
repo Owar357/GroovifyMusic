@@ -18,19 +18,19 @@ public class Album implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
+    private Long id;
 
     @Column(nullable = false, length = 150)
-    private String Nombre;
+    private String nombre;
 
     @Column(nullable = false)
-    private LocalDateTime FechaLansamiento ;
+    private LocalDateTime fechaLanzamiento ;
 
     @Column(length = 300)
-    private String Portada;
+    private String portada;
 
     @Column(length = 6)
-    private String Duracion;
+    private String duracion;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "artista_id")
