@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @Setter
 @Entity
 @Table(name = "reproducciones" ,  schema = "public")
-public class Reproduccion implements Serializable {
+public class    Reproduccion implements Serializable {
 
     private  static  final long serialVersionUID = 1L;
 

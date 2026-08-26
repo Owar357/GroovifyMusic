@@ -38,7 +38,9 @@ public class Cancion implements Serializable {
     @Column(name = "archivo_audio_url",nullable = false, length = 300)
     private String archivoAudio;
 
-    //private  Album album;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "album_id", nullable = false)
+    private  Album album;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id",  nullable = false)
