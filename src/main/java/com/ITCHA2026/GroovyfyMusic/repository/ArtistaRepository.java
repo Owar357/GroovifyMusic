@@ -6,6 +6,13 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ArtistaRepository extends JpaRepository<Artista, Integer> {
+<<<<<<< HEAD
     boolean existsByNombre(String nombre);
     boolean existsByNombreAndIdNot(String nombre, Integer id);
 }
+=======
+
+    boolean existsByNombre(String nombre);
+    boolean existsByNombreAndIdNot(String nombre,Integer id );
+}
+>>>>>>> 630898fdc79d248efd2f934c6e9053c9a0091c9e
