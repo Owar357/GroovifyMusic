@@ -22,14 +22,8 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-    private final JwtService jwtService;
 
-    // ✅ Ignorar rutas públicas para que el filtro no las procese
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) {
-        String path = request.getRequestURI();
-        return path.equals("/api/auth/login") || path.equals("/api/usuarios/register");
-    }
+    private final JwtService jwtService;
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
@@ -55,11 +49,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     claims.get("rol", String.class)
             );
 
-            List<GrantedAuthority> authorities =
-                    List.of(new SimpleGrantedAuthority("ROLE_" + usuarioAutenticado.rol()));
+            String rol = usuarioAutenticado.rol();
+            String authorityName = (rol != null && rol.startsWith("ROLE_")) ? rol : "ROLE_" + rol;
+            List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(authorityName));
 
-            UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(usuarioAutenticado, null, authorities);
+            var authentication = new UsernamePasswordAuthenticationToken(usuarioAutenticado, null, authorities);
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authentication);
 

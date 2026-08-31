@@ -20,7 +20,8 @@ public class AuthService implements IAuthService {
 
     @Override
     public LoginResponseDTO login(LoginRequestDTO request) {
-        // Autenticar usando correo y password
+        System.out.println("🚀 LLEGÓ AL AUTH SERVICE: " + request.getCorreo());
+
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getCorreo(),
@@ -28,13 +29,11 @@ public class AuthService implements IAuthService {
                 )
         );
 
-        // Obtener el principal (UsuarioPrincipal)
-        UsuarioPrincipal principal = (UsuarioPrincipal) authentication.getPrincipal();
+        System.out.println("✅ AUTENTICACIÓN EXITOSA EN AUTH SERVICE");
 
-        // Generar token JWT
+        UsuarioPrincipal principal = (UsuarioPrincipal) authentication.getPrincipal();
         String token = jwtService.generarToken(principal);
 
-        // Responder con token y datos del usuario
         return new LoginResponseDTO(
                 token,
                 principal.getAlias(),

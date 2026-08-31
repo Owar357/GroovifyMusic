@@ -34,7 +34,7 @@ public class Usuario implements Serializable {
       @Column(length = 100, nullable = false)
       private  String password;
 
-      @Column(name = "imagen_url",length = 300, nullable = false )
+      @Column(name = "imagen_url",length = 300, nullable = true )
       private  String imagen;
 
       @Column(name = "fecha_nacimiento", nullable = false )

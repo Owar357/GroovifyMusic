@@ -7,9 +7,15 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface CancionRepository extends JpaRepository<Cancion,Integer> {
-    boolean existsByNombreAndUsuarioId(String nombre, Integer usuarioId);
-    List<Cancion> findByUsuarioId(Integer usuarioId);
+public interface CancionRepository extends JpaRepository<Cancion, Integer> {
+
     List<Cancion> findByNombreContainingIgnoreCase(String nombre);
 
+    List<Cancion> findByArtistaAliasContainingIgnoreCase(String alias);
+
+    List<Cancion> findByNombreContainingIgnoreCaseAndArtistaAliasContainingIgnoreCase(String nombre, String alias);
+
+    boolean existsByNombreAndArtistaId(String nombre, Integer artistaId);
+
+    List<Cancion> findByArtistaId(Integer artistaId);
 }

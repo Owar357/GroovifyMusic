@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Setter
 @Getter
@@ -14,4 +15,6 @@ public class CancionRegistroDTO {
     private Integer duracionSegundos;
     private String portada;
     private String archivoAudio;
+    private Integer albumId;
+    private List<Integer> generosIds;
 }

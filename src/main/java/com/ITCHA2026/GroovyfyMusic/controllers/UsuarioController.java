@@ -18,15 +18,6 @@ public class UsuarioController {
 
     private final UsuarioService usuarioService;
 
-    @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<UsuarioResponseDTO> register(
-            @RequestPart("usuario") UsuarioRegistroDTO dto,
-            @RequestPart(value = "imagen", required = false) MultipartFile imagen) {
-        UsuarioResponseDTO response = usuarioService.register(dto, imagen);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
-
-
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/{id}")
     public ResponseEntity<UsuarioResponseDTO> findById(@PathVariable Integer id) {
