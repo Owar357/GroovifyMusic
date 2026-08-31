@@ -7,7 +7,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ReproduccionRepository extends JpaRepository<Reproduccion,Integer> {
-    List<Reproduccion> findByUsuarioIdOrderByReproducidoEnDesc(Integer usuarioId);
+public interface ReproduccionRepository extends JpaRepository<Reproduccion, Integer> {
+    List<Reproduccion> findByUsuarioId(Integer usuarioId);
+    List<Reproduccion> findByCancionId(Integer cancionId);
     long countByCancionId(Integer cancionId);
 }
