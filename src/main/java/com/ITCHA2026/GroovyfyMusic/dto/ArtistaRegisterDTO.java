@@ -7,6 +7,6 @@ import lombok.Setter;
 @Getter
 public class ArtistaRegisterDTO {
     private String nombre;
-    private String biografica;
+    private String biografia;
     private String imagen;
 }

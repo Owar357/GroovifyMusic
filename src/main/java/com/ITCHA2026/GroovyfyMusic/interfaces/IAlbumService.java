@@ -2,22 +2,19 @@ package com.ITCHA2026.GroovyfyMusic.interfaces;
 
 import com.ITCHA2026.GroovyfyMusic.dto.AlbumRegisterDTO;
 import com.ITCHA2026.GroovyfyMusic.dto.AlbumResponseDTO;
-import com.ITCHA2026.GroovyfyMusic.entities.Album;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 public interface IAlbumService {
 
-    List<AlbumRegisterDTO> findAll();
+    List<AlbumResponseDTO> findAll();
 
     AlbumResponseDTO findById(Integer id);
 
-    AlbumResponseDTO save (AlbumRegisterDTO albumRegisterDTO);
+    AlbumResponseDTO save(AlbumRegisterDTO albumRegisterDTO, MultipartFile file);
 
-    AlbumResponseDTO Update (Integer id, AlbumRegisterDTO albumRegisterDTO);
+    AlbumResponseDTO update(Integer id, AlbumRegisterDTO albumRegisterDTO, MultipartFile file);
 
-    void delete (Integer id );
-
-
-
+    void delete(Integer id);
 }

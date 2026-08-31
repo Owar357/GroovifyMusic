@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 public class ArtistaResponseDTO {
     private Integer id;
     private String nombre;
-    private String biografica;
+    private String biografia;
     private String imagen;
     private LocalDateTime creadoEn;
 }

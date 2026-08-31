@@ -7,7 +7,7 @@ import java.util.List;
 public interface IGeneroService {
     List<GeneroDTO> findAll();
 
-    GeneroDTO findById(Integer id, GeneroDTO dto);
+    GeneroDTO findById(Integer id);
 
     GeneroDTO save (GeneroDTO dto);
 
