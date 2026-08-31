@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @AllArgsConstructor
@@ -17,8 +19,11 @@ public class Genero implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer Id;
+    private Integer id;
 
     @Column(nullable = false, length = 50)
-    private String Nombre;
+    private String nombre;
+
+    @ManyToMany(mappedBy = "generos")
+    private List<Cancion> canciones = new ArrayList<>();
 }
