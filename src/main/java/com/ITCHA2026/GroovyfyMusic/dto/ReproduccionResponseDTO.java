@@ -8,8 +8,10 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class ReproduccionResponseDTO {
-    private  Integer id;
-    private UsuarioResponseDTO usuario;
-    private CancionResponseDTO cancion;
+    private Integer id;
+    private Integer usuarioId;
+    private String usuarioAlias;
+    private Integer cancionId;
+    private String cancionNombre;
     private LocalDateTime reproducidoEn;
 }

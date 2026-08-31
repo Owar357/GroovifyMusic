@@ -8,11 +8,8 @@ import com.ITCHA2026.GroovyfyMusic.entities.Reproduccion;
 import java.util.List;
 
 public interface IReproduccionService {
-
-    ReproduccionResponseDTO register(ReproduccionRegistroDTO dto, Integer usuarioId);
-
-    List<ReproduccionResponseDTO> findAll();
-
-    List<ReproduccionResponseDTO> search(ReproduccionFiltroDTO filtro);
-
+    ReproduccionResponseDTO registrarReproduccion(ReproduccionRegistroDTO dto, Integer usuarioId);
+    List<ReproduccionResponseDTO> obtenerHistorialPorUsuario(Integer usuarioId);
+    List<ReproduccionResponseDTO> obtenerReproduccionesPorCancion(Integer cancionId);
+    long contarReproduccionesPorCancion(Integer cancionId);
 }
