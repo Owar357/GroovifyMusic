@@ -31,7 +31,7 @@ public class JwtService {
         Date expiracion = new Date(ahora.getTime() + expirationMs);
 
         return Jwts.builder()
-                .subject(principal.getCorreo())          // alias o correo
+                .subject(principal.getCorreo())
                 .claim("id", principal.getId())
                 .claim("alias", principal.getAlias())
                 .claim("correo", principal.getCorreo())

@@ -9,15 +9,13 @@ import org.mapstruct.ReportingPolicy;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(componentModel = "spring", uses = {UsuarioMapper.class}, unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface AlbumMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "artista", ignore = true)
     Album toEntity(AlbumRegisterDTO dto);
 
-    @Mapping(target = "artistaId", source = "artista.id")
-    @Mapping(target = "nombreArtista", source = "artista.nombre")
     AlbumResponseDTO toResponseDTO(Album entity);
 
     List<AlbumResponseDTO> toResponseDTOList(List<Album> entities);

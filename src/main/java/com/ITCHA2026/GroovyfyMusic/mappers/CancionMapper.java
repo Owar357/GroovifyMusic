@@ -1,3 +1,4 @@
+
 package com.ITCHA2026.GroovyfyMusic.mappers;
 
 import com.ITCHA2026.GroovyfyMusic.dto.CancionRegistroDTO;
@@ -9,12 +10,15 @@ import org.mapstruct.ReportingPolicy;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", uses = {UsuarioMapper.class}, unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(componentModel = "spring", uses = {UsuarioMapper.class, GeneroMapper.class, AlbumMapper.class}, unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface CancionMapper {
+
         CancionResponseDTO toDTO(Cancion entity);
 
         @Mapping(target = "id", ignore = true)
-        @Mapping(target = "usuario", ignore = true)
+        @Mapping(target = "artista", ignore = true)
+        @Mapping(target = "album", ignore = true)
+        @Mapping(target = "generos", ignore = true)
         Cancion toEntity(CancionRegistroDTO dto);
 
         List<CancionResponseDTO> toDtoList(List<Cancion> entities);

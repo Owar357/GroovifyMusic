@@ -8,6 +8,8 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -39,11 +41,19 @@ public class Cancion implements Serializable {
     private String archivoAudio;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "album_id", nullable = false)
+    @JoinColumn(name = "album_id", nullable = true)
     private  Album album;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id",  nullable = false)
-    private  Usuario usuario;
+    private  Usuario artista;
 
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "cancion_genero",
+            joinColumns = @JoinColumn(name = "cancion_id"),
+            inverseJoinColumns = @JoinColumn(name = "genero_id")
+    )
+
+    private List<Genero> generos = new ArrayList<>();
 }
