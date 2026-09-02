@@ -16,5 +16,7 @@ public interface IAlbumService {
 
     AlbumResponseDTO update(Integer id, AlbumRegisterDTO albumRegisterDTO, MultipartFile file);
 
+    List<AlbumResponseDTO> findByArtistaId(Integer artistaId);
+
     void delete(Integer id);
 }

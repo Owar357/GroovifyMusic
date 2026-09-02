@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,23 +20,28 @@ import java.util.Map;
 @RequestMapping("/api")
 @RequiredArgsConstructor
 public class AlbumController {
+
     private final IAlbumService iservice;
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/album")
     public ResponseEntity<List<AlbumResponseDTO>> findAll() {
+
         return ResponseEntity.ok(iservice.findAll());
     }
 
-    @GetMapping("/album/{id}")
-    public ResponseEntity<AlbumResponseDTO> getById(@PathVariable Integer id){
-        return ResponseEntity.ok(iservice.findById(id));
-
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/album/artista/{artistaId}")
+    public ResponseEntity<List<AlbumResponseDTO>> getByArtistaId(@PathVariable Integer artistaId) {
+        return ResponseEntity.ok(iservice.findByArtistaId(artistaId));
     }
 
+    @PreAuthorize("hasRole('ARTISTA')")
     @PostMapping(value = "/album", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> create(
             @RequestPart("album") AlbumRegisterDTO dto,
             @RequestPart(value = "file", required = false) MultipartFile file){
+
         Map<String, Object> response = new HashMap<>();
         AlbumResponseDTO albumsave = iservice.save(dto, file);
 
@@ -45,8 +51,13 @@ public class AlbumController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasRole('ARTISTA')")
     @PutMapping(value = "/album/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> Update(@PathVariable Integer id, @RequestPart("album") AlbumRegisterDTO dto, @RequestPart(value = "file", required = false) MultipartFile file){
+    public ResponseEntity<?> Update(
+            @PathVariable Integer id,
+            @RequestPart("album") AlbumRegisterDTO dto,
+            @RequestPart(value = "file", required = false) MultipartFile file){
+
         Map<String, Object> response = new HashMap<>();
         AlbumResponseDTO albumupdate = iservice.update(id, dto, file);
 
@@ -56,6 +67,7 @@ public class AlbumController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('ARTISTA')")
     @DeleteMapping("/album/{id}")
     public ResponseEntity<?> delete(@PathVariable Integer id){
         Map<String, Object> response = new HashMap<>();

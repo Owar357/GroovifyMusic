@@ -34,10 +34,6 @@ public class Album implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "artista_id")
-    private Artista artista;
-
-
-
-
+    private Usuario artista;
 
 }

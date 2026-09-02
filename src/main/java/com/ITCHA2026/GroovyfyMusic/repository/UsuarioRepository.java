@@ -3,6 +3,7 @@ package com.ITCHA2026.GroovyfyMusic.repository;
 import com.ITCHA2026.GroovyfyMusic.entities.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UsuarioRepository extends JpaRepository<Usuario,Integer>{
@@ -11,5 +12,6 @@ public interface UsuarioRepository extends JpaRepository<Usuario,Integer>{
     Optional<Usuario> findByAlias(String alias);
     Optional<Usuario> findByCorreo(String correo);
     boolean existsByCorreoAndIdNot(String correo, Integer id);
+    List<Usuario> findByRolNombre(String nombreRol);
 }
 

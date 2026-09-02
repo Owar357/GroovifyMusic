@@ -12,5 +12,5 @@ public class AlbumResponseDTO {
     private LocalDateTime fechaLanzamiento;
     private String portada;
     private String duracion;
-    private ArtistaResponseDTO artista;
+    private UsuarioResponseDTO artista;
 }
