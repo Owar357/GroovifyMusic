@@ -53,13 +53,15 @@ public class AlbumService implements IAlbumService {
         Usuario artista = usuarioRepository.findById(albumRegisterDTO.getArtistaId())
                 .orElseThrow(() -> new ResourceNotFoundException("No se encontró el usuario con ID: " + albumRegisterDTO.getArtistaId()));
 
-        // Solo agregamos .name() para que el Enum se compare como texto.
         if (!artista.getRol().getNombre().name().equals("ARTISTA")) {
             throw new IllegalArgumentException("El usuario seleccionado no es un Artista y no puede registrar álbumes.");
         }
 
         Album album = mapper.toEntity(albumRegisterDTO);
         album.setArtista(artista);
+
+        //con esta condicion se obligara a la funcionalidad a crearlo en cero ai entraranlas cacniones afectando la duracion
+        album.setDuracion("00:00");
 
         if (file != null && !file.isEmpty()) {
             String urlPortada = cloudinaryService.uploadImage(file, CLOUDINARY_FOLDER);
@@ -80,7 +82,6 @@ public class AlbumService implements IAlbumService {
 
         album.setNombre(albumRegisterDTO.getNombre());
         album.setFechaLanzamiento(albumRegisterDTO.getFechaLanzamiento());
-        album.setDuracion(albumRegisterDTO.getDuracion());
         album.setArtista(artista);
 
 

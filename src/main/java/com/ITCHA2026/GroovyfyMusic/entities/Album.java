@@ -5,10 +5,13 @@ import lombok.*;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @RequiredArgsConstructor
@@ -35,5 +38,9 @@ public class Album implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "artista_id")
     private Usuario artista;
+
+    @OneToMany(mappedBy = "album", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<Cancion> canciones = new ArrayList<>();
 
 }

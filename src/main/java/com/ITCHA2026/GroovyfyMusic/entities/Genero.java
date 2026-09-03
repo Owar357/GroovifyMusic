@@ -24,6 +24,6 @@ public class Genero implements Serializable {
     @Column(nullable = false, length = 50)
     private String nombre;
 
-    @OneToMany(mappedBy = "generos")
+    @ManyToMany(mappedBy = "generos")
     private List<Cancion> canciones = new ArrayList<>();
 }

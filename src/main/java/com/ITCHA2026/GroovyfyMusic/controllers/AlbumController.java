@@ -38,7 +38,7 @@ public class AlbumController {
 
     @PreAuthorize("hasRole('ARTISTA')")
     @PostMapping(value = "/album", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> create(
+    public ResponseEntity<?> save(
             @RequestPart("album") AlbumRegisterDTO dto,
             @RequestPart(value = "file", required = false) MultipartFile file){
 
