@@ -14,7 +14,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@RequiredArgsConstructor
 @Table(name = "album",schema = "public")
 public class Album implements Serializable {
     private static final long  serialVersionUID = 1L;

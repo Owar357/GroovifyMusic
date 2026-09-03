@@ -20,47 +20,20 @@ import java.util.Map;
 public class GeneroController  {
     private final IGeneroService iservice;
 
-    @GetMapping("/genero")
+    @GetMapping
     public ResponseEntity<List<GeneroDTO>> findAll() {
         return ResponseEntity.ok(iservice.findAll());
     }
 
-    @GetMapping("/genero/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<GeneroDTO> findById(@PathVariable Integer id) {
         return ResponseEntity.ok(iservice.findById(id));
     }
-
-    @PostMapping("/genero")
-    public ResponseEntity<?> save(@RequestBody GeneroDTO dto){
-        Map<String, Object> response = new HashMap<>();
-        GeneroDTO generosave = iservice.save(dto);
-
-        response.put("message", "Genero creado correctamente");
-        response.put("genero", generosave);
-
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
-    }
-    @PutMapping("/genero/{id}")
-    public ResponseEntity<?> update(@PathVariable Integer id, @RequestBody GeneroDTO dto){
-        Map<String, Object> response = new HashMap<>();
-
-        dto.setId(id);
-        GeneroDTO generoupdate = iservice.save(dto);
-
-        response.put("message", "El genero se actualizo correctamente");
-        response.put("genero", generoupdate);
-
-        return new ResponseEntity<>(response, HttpStatus.OK);
+    @GetMapping("/buscar")
+    public ResponseEntity<List<GeneroDTO>> buscarPorNombre(@RequestParam String nombre){
+        return ResponseEntity.ok(iservice.buscarPorNombre(nombre));
     }
 
-    @DeleteMapping("/genero/{id}")
-    public ResponseEntity<?> delete(@PathVariable Integer id){
-        Map<String, Object> response = new HashMap<>();
 
-        iservice.delete(id);
-        response.put("message", "el Genero fue elimindado correctamente");
-
-        return new ResponseEntity<>(response,HttpStatus.OK);
-    }
 
 }

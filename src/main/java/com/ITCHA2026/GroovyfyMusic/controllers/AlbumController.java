@@ -3,11 +3,14 @@ package com.ITCHA2026.GroovyfyMusic.controllers;
 import com.ITCHA2026.GroovyfyMusic.dto.AlbumRegisterDTO;
 import com.ITCHA2026.GroovyfyMusic.dto.AlbumResponseDTO;
 import com.ITCHA2026.GroovyfyMusic.interfaces.IAlbumService;
+import com.ITCHA2026.GroovyfyMusic.security.AuthenticatedUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -41,6 +44,11 @@ public class AlbumController {
     public ResponseEntity<?> save(
             @RequestPart("album") AlbumRegisterDTO dto,
             @RequestPart(value = "file", required = false) MultipartFile file){
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        AuthenticatedUser user = (AuthenticatedUser) authentication.getPrincipal();
+
+        dto.setArtistaId(user.id());
 
         Map<String, Object> response = new HashMap<>();
         AlbumResponseDTO albumsave = iservice.save(dto, file);
