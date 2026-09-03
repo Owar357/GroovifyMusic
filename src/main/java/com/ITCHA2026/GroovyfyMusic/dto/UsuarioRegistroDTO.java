@@ -12,6 +12,7 @@ import java.time.LocalDate;
 public class UsuarioRegistroDTO {
     private  String alias;
     private  String correo;
+    private String biografia;
     private  String password;
     private Roles rol;
     private LocalDate fechaNacimiento;

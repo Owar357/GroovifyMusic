@@ -37,6 +37,9 @@ public class Usuario implements Serializable {
       @Column(name = "imagen_url",length = 300, nullable = true )
       private  String imagen;
 
+      @Column(name = "biografia", columnDefinition = "TEXT", nullable = true)
+      private String biografia;
+
       @Column(name = "fecha_nacimiento", nullable = false )
       private LocalDate fechaNacimiento;
 

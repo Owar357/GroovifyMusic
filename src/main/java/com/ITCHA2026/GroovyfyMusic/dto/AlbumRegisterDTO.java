@@ -1,17 +1,14 @@
 package com.ITCHA2026.GroovyfyMusic.dto;
 
-
 import lombok.Getter;
 import lombok.Setter;
-
 import java.time.LocalDateTime;
 
-@Setter
 @Getter
+@Setter
 public class AlbumRegisterDTO {
-    private String Nombre;
-    private LocalDateTime FechaLansamiento;
-    private String Portada;
-    private String Duracion;
-
+    private String nombre;
+    private LocalDateTime fechaLanzamiento;
+    private String portada;
+    private Integer artistaId;
 }

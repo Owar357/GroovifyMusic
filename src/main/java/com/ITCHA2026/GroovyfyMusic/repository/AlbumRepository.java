@@ -13,6 +13,8 @@ public interface AlbumRepository extends JpaRepository<Album, Integer> {
 
     List<Album> findByNombreContainingIgnoreCase(String nombre);
 
+    boolean existsByArtistaId(Integer artistaId);
+
     boolean existsByNombreAndArtistaId(String nombre, Integer artistaId);
 
     boolean existsByNombreAndArtistaIdAndIdNot(String nombre, Integer artistaId, Integer id);

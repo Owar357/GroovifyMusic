@@ -36,6 +36,7 @@ public class JwtService {
                 .claim("alias", principal.getAlias())
                 .claim("correo", principal.getCorreo())
                 .claim("rol", principal.getRol())
+                .claim("imagen", principal.getImagen())
                 .issuedAt(ahora)
                 .expiration(expiracion)
                 .signWith(obtenerLlave())

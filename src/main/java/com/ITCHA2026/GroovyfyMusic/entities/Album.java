@@ -5,13 +5,15 @@ import lombok.*;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@RequiredArgsConstructor
 @Table(name = "album",schema = "public")
 public class Album implements Serializable {
     private static final long  serialVersionUID = 1L;
@@ -34,10 +36,10 @@ public class Album implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "artista_id")
-    private Artista artista;
+    private Usuario artista;
 
-
-
-
+    @OneToMany(mappedBy = "album", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<Cancion> canciones = new ArrayList<>();
 
 }

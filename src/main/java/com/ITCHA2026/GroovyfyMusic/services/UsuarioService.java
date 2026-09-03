@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class UsuarioService implements IUsuarioService {
@@ -35,6 +37,8 @@ public class UsuarioService implements IUsuarioService {
         }
 
         Usuario usuario = usuarioMapper.toEntity(dto);
+
+        usuario.setBiografia(dto.getBiografia());
 
         usuario.setPassword(passwordEncoder.encode(dto.getPassword()));
 
@@ -67,6 +71,7 @@ public class UsuarioService implements IUsuarioService {
         usuarioExistente.setAlias(dto.getAlias());
         usuarioExistente.setCorreo(dto.getCorreo());
         usuarioExistente.setFechaNacimiento(dto.getFechaNacimiento());
+        usuarioExistente.setBiografia(dto.getBiografia());
 
         if (dto.getPassword() != null && !dto.getPassword().isEmpty()) {
             usuarioExistente.setPassword(passwordEncoder.encode(dto.getPassword()));
@@ -97,6 +102,15 @@ public class UsuarioService implements IUsuarioService {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + id));
         return usuarioMapper.toDTO(usuario);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<UsuarioResponseDTO> findAllArtistas() {
+        return usuarioRepository.findByRolNombre("ARTISTA")
+                .stream()
+                .map(usuarioMapper::toDTO)
+                .toList();
     }
 
     @Override

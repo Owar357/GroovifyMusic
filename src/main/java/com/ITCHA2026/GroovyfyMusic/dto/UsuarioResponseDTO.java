@@ -12,6 +12,7 @@ public class UsuarioResponseDTO {
     private Integer id;
     private String alias;
     private String correo;
+    private String biografia;
     private String imagen;
     private LocalDate fechaNacimiento;
     private RoleDTO rol;

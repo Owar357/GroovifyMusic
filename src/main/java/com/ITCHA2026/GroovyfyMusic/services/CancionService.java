@@ -15,11 +15,13 @@ import com.ITCHA2026.GroovyfyMusic.repository.AlbumRepository;
 import com.ITCHA2026.GroovyfyMusic.repository.CancionRepository;
 import com.ITCHA2026.GroovyfyMusic.repository.GeneroRepository;
 import com.ITCHA2026.GroovyfyMusic.repository.UsuarioRepository;
+import com.mpatric.mp3agic.Mp3File; // 🟢 Importado mp3agic
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File; // 🟢 Importado File
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +42,6 @@ public class CancionService implements ICancionService {
         Usuario artista = usuarioRepository.findById(usuarioId)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
 
-        // ✅ CORREGIDO: existsByNombreAndArtistaId
         if (cancionRepository.existsByNombreAndArtistaId(dto.getNombre(), usuarioId)) {
             throw new ConflictException("Ya existe una canción con ese nombre para este artista");
         }
@@ -52,9 +53,16 @@ public class CancionService implements ICancionService {
             String portadaUrl = cloudinaryService.uploadImage(portada, "canciones/portadas");
             cancion.setPortada(portadaUrl);
         }
+
         if (archivoAudio != null && !archivoAudio.isEmpty()) {
             String audioUrl = cloudinaryService.uploadAudio(archivoAudio, "canciones/audios");
             cancion.setArchivoAudio(audioUrl);
+
+            // 🟢 Calcula la duración directamente del archivo MP3
+            Integer duracion = calcularDuracionSegundos(archivoAudio);
+            if (duracion > 0) {
+                cancion.setDuracionSegundos(duracion);
+            }
         }
 
         if (dto.getAlbumId() != null) {
@@ -74,6 +82,11 @@ public class CancionService implements ICancionService {
         }
 
         Cancion cancionGuardada = cancionRepository.save(cancion);
+
+        if (cancionGuardada.getAlbum() != null) {
+            recalcularDuracionAlbum(cancionGuardada.getAlbum().getId());
+        }
+
         return cancionMapper.toDTO(cancionGuardada);
     }
 
@@ -83,17 +96,28 @@ public class CancionService implements ICancionService {
         Cancion cancionExistente = cancionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Canción no encontrada con id: " + id));
 
+        // Registrar ID del álbum anterior por si cambia de álbum
+        Integer oldAlbumId = (cancionExistente.getAlbum() != null) ? cancionExistente.getAlbum().getId() : null;
+
         if (dto.getNombre() != null) cancionExistente.setNombre(dto.getNombre());
         if (dto.getFechaLanzamiento() != null) cancionExistente.setFechaLanzamiento(dto.getFechaLanzamiento());
+
+        // Si mandan duracionSegundos por JSON se mantiene, pero si suben MP3 nuevo se sobreescribe abajo
         if (dto.getDuracionSegundos() != null) cancionExistente.setDuracionSegundos(dto.getDuracionSegundos());
 
         if (portada != null && !portada.isEmpty()) {
             String portadaUrl = cloudinaryService.uploadImage(portada, "canciones/portadas");
             cancionExistente.setPortada(portadaUrl);
         }
+
         if (archivoAudio != null && !archivoAudio.isEmpty()) {
             String audioUrl = cloudinaryService.uploadAudio(archivoAudio, "canciones/audios");
             cancionExistente.setArchivoAudio(audioUrl);
+
+            Integer duracion = calcularDuracionSegundos(archivoAudio);
+            if (duracion > 0) {
+                cancionExistente.setDuracionSegundos(duracion);
+            }
         }
 
         if (dto.getAlbumId() != null) {
@@ -117,6 +141,15 @@ public class CancionService implements ICancionService {
         }
 
         Cancion cancionActualizada = cancionRepository.save(cancionExistente);
+
+        if (cancionActualizada.getAlbum() != null) {
+            recalcularDuracionAlbum(cancionActualizada.getAlbum().getId());
+        }
+
+        if (oldAlbumId != null && (cancionActualizada.getAlbum() == null || !oldAlbumId.equals(cancionActualizada.getAlbum().getId()))) {
+            recalcularDuracionAlbum(oldAlbumId);
+        }
+
         return cancionMapper.toDTO(cancionActualizada);
     }
 
@@ -161,9 +194,54 @@ public class CancionService implements ICancionService {
     @Override
     @Transactional
     public void delete(Integer id) {
-        if (!cancionRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Canción no encontrada con id: " + id);
+        Cancion cancion = cancionRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Canción no encontrada con id: " + id));
+
+        Integer albumId = (cancion.getAlbum() != null) ? cancion.getAlbum().getId() : null;
+
+        cancionRepository.delete(cancion);
+
+        if (albumId != null) {
+            recalcularDuracionAlbum(albumId);
         }
-        cancionRepository.deleteById(id);
+    }
+
+    private void recalcularDuracionAlbum(Integer albumId) {
+        if (albumId == null) return;
+
+        Integer totalSegundos = cancionRepository.sumDuracionSegundosByAlbumId(albumId);
+        if (totalSegundos == null) totalSegundos = 0;
+
+        int minutos = totalSegundos / 60;
+        int segundos = totalSegundos % 60;
+        String duracionFormateada = String.format("%02d:%02d", minutos, segundos);
+
+        albumRepository.findById(albumId).ifPresent(album -> {
+            album.setDuracion(duracionFormateada);
+            albumRepository.save(album);
+        });
+    }
+
+    private Integer calcularDuracionSegundos(MultipartFile archivoAudio) {
+        if (archivoAudio == null || archivoAudio.isEmpty()) {
+            return 0;
+        }
+
+        File tempFile = null;
+        try {
+            tempFile = File.createTempFile("temp_audio_", ".mp3");
+            archivoAudio.transferTo(tempFile);
+
+            Mp3File mp3file = new Mp3File(tempFile);
+            return (int) mp3file.getLengthInSeconds();
+
+        } catch (Exception e) {
+            // Si hay un error leyendo el MP3, retorna 0 de forma segura
+            return 0;
+        } finally {
+            if (tempFile != null && tempFile.exists()) {
+                tempFile.delete();
+            }
+        }
     }
 }
