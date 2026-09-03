@@ -15,6 +15,7 @@ public class UsuarioPrincipal implements UserDetails {
     private final String alias;
     private final String correo;
     private final String password;
+    private final  String imagen ;
     private final String rol;
     private final boolean activo;
 
@@ -24,6 +25,7 @@ public class UsuarioPrincipal implements UserDetails {
         this.correo = usuario.getCorreo();
         this.password = usuario.getPassword();
         this.rol = usuario.getRol().getNombre().name();
+        this.imagen = usuario.getImagen();
         this.activo = true;
     }
 
