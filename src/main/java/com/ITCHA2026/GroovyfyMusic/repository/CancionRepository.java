@@ -21,6 +21,8 @@ public interface CancionRepository extends JpaRepository<Cancion, Integer> {
 
     List<Cancion> findByArtistaId(Integer artistaId);
 
+    List<Cancion> findByAlbumId(Integer albumId);
+
     @Query("SELECT COALESCE(SUM(c.duracionSegundos), 0) FROM Cancion c WHERE c.album.id = :albumId")
     Integer sumDuracionSegundosByAlbumId(@Param("albumId") Integer albumId);
 }

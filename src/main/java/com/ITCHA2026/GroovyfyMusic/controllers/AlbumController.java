@@ -33,12 +33,17 @@ public class AlbumController {
         return ResponseEntity.ok(iservice.findAll());
     }
 
-    @PreAuthorize("isAuthenticated()")
-    @GetMapping("/album/artista/{artistaId}")
-    public ResponseEntity<List<AlbumResponseDTO>> getByArtistaId(@PathVariable Integer artistaId) {
-        return ResponseEntity.ok(iservice.findByArtistaId(artistaId));
-    }
+        @PreAuthorize("isAuthenticated()")
+        @GetMapping("/album/artista/{artistaId}")
+        public ResponseEntity<List<AlbumResponseDTO>> getByArtistaId(@PathVariable Integer artistaId) {
+            return ResponseEntity.ok(iservice.findByArtistaId(artistaId));
+        }
 
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/album/{id}")
+    public ResponseEntity<AlbumResponseDTO> findById(@PathVariable Integer id) {
+        return ResponseEntity.ok(iservice.findById(id));
+    }
     @PreAuthorize("hasRole('ARTISTA')")
     @PostMapping(value = "/album", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> save(

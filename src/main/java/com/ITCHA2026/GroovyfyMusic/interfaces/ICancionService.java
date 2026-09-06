@@ -18,5 +18,7 @@ public interface ICancionService {
 
     List<CancionResponseDTO> search(CancionFiltroDTO filtro);
 
+    List<CancionResponseDTO> findByAlbumId(Integer albumId);
+
     void delete(Integer id);
 }

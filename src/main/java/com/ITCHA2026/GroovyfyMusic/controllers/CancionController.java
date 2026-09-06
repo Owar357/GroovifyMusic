@@ -53,6 +53,11 @@ public class CancionController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/album/{albumId}")
+    public ResponseEntity<List<CancionResponseDTO>> findByAlbumId(@PathVariable Integer albumId) {
+        return ResponseEntity.ok(cancionService.findByAlbumId(albumId));
+    }
+
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/search")
     public ResponseEntity<List<CancionResponseDTO>> search(@RequestBody CancionFiltroDTO filtro) {
@@ -77,4 +82,6 @@ public class CancionController {
         cancionService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+
 }

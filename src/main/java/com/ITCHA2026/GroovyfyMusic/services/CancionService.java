@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File; // 🟢 Importado File
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,7 +58,7 @@ public class CancionService implements ICancionService {
             String audioUrl = cloudinaryService.uploadAudio(archivoAudio, "canciones/audios");
             cancion.setArchivoAudio(audioUrl);
 
-            // 🟢 Calcula la duración directamente del archivo MP3
+            //  Se calcula la duración directamente del archivo MP3
             Integer duracion = calcularDuracionSegundos(archivoAudio);
             if (duracion > 0) {
                 cancion.setDuracionSegundos(duracion);
@@ -189,6 +189,13 @@ public class CancionService implements ICancionService {
         } else {
             return findAll();
         }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<CancionResponseDTO> findByAlbumId(Integer albumId) {
+        List<Cancion> canciones = cancionRepository.findByAlbumId(albumId);
+        return cancionMapper.toDtoList(canciones);
     }
 
     @Override
