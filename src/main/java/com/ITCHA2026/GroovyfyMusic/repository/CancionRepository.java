@@ -1,6 +1,8 @@
 package com.ITCHA2026.GroovyfyMusic.repository;
 
 import com.ITCHA2026.GroovyfyMusic.entities.Cancion;
+import com.ITCHA2026.GroovyfyMusic.interfaces.ICancionPopular;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,7 +21,14 @@ public interface CancionRepository extends JpaRepository<Cancion, Integer> {
 
     boolean existsByNombreAndArtistaId(String nombre, Integer artistaId);
 
-    List<Cancion> findByArtistaId(Integer artistaId);
+    @Query("SELECT c.id as id, c.nombre as nombre, c.duracionSegundos as duracionSegundos, " +
+            "c.portada as portada, c.archivoAudio as archivoAudio, COUNT(r.id) as reproducciones " +
+            "FROM Cancion c " +
+            "LEFT JOIN Reproduccion r ON r.cancion.id = c.id " +
+            "WHERE c.artista.id = :artistaId " +
+            "GROUP BY c.id, c.nombre, c.duracionSegundos, c.portada, c.archivoAudio " +
+            "ORDER BY COUNT(r.id) DESC")
+    List<ICancionPopular> findPopularesByArtistaId(@Param("artistaId") Integer artistaId, Pageable pageable);
 
     List<Cancion> findByAlbumId(Integer albumId);
 

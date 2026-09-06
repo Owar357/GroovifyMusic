@@ -13,5 +13,6 @@ public interface IUsuarioService {
     void changePassword(Integer id, String passwordActual, String passwordNueva);
     UsuarioResponseDTO findById(Integer id);
     List<UsuarioResponseDTO> findAllArtistas();
+    List<UsuarioResponseDTO> searchArtistas(String alias);
     void delete(Integer id);
 }

@@ -18,5 +18,7 @@ public interface IAlbumService {
 
     List<AlbumResponseDTO> findByArtistaId(Integer artistaId);
 
+    List<AlbumResponseDTO> search(String nombre);
+
     void delete(Integer id);
 }

@@ -4,6 +4,7 @@ import com.ITCHA2026.GroovyfyMusic.dto.UsuarioRegistroDTO;
 import com.ITCHA2026.GroovyfyMusic.dto.UsuarioResponseDTO;
 import com.ITCHA2026.GroovyfyMusic.entities.Role;
 import com.ITCHA2026.GroovyfyMusic.entities.Usuario;
+import com.ITCHA2026.GroovyfyMusic.enums.Roles;
 import com.ITCHA2026.GroovyfyMusic.exceptions.ConflictException;
 import com.ITCHA2026.GroovyfyMusic.exceptions.ResourceNotFoundException;
 import com.ITCHA2026.GroovyfyMusic.interfaces.IUsuarioService;
@@ -111,6 +112,13 @@ public class UsuarioService implements IUsuarioService {
                 .stream()
                 .map(usuarioMapper::toDTO)
                 .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<UsuarioResponseDTO> searchArtistas(String alias) {
+        List<Usuario> usuarios = usuarioRepository.findByAliasContainingIgnoreCaseAndRolNombre(alias, Roles.ARTISTA);
+        return usuarioMapper.toResponseDtoList(usuarios);
     }
 
     @Override

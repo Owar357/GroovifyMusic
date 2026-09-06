@@ -1,6 +1,7 @@
 package com.ITCHA2026.GroovyfyMusic.services;
 
 import com.ITCHA2026.GroovyfyMusic.dto.CancionFiltroDTO;
+import com.ITCHA2026.GroovyfyMusic.dto.CancionPopularDTO;
 import com.ITCHA2026.GroovyfyMusic.dto.CancionRegistroDTO;
 import com.ITCHA2026.GroovyfyMusic.dto.CancionResponseDTO;
 import com.ITCHA2026.GroovyfyMusic.entities.Album;
@@ -9,13 +10,12 @@ import com.ITCHA2026.GroovyfyMusic.entities.Genero;
 import com.ITCHA2026.GroovyfyMusic.entities.Usuario;
 import com.ITCHA2026.GroovyfyMusic.exceptions.ConflictException;
 import com.ITCHA2026.GroovyfyMusic.exceptions.ResourceNotFoundException;
+import com.ITCHA2026.GroovyfyMusic.interfaces.ICancionPopular;
 import com.ITCHA2026.GroovyfyMusic.interfaces.ICancionService;
 import com.ITCHA2026.GroovyfyMusic.mappers.CancionMapper;
-import com.ITCHA2026.GroovyfyMusic.repository.AlbumRepository;
-import com.ITCHA2026.GroovyfyMusic.repository.CancionRepository;
-import com.ITCHA2026.GroovyfyMusic.repository.GeneroRepository;
-import com.ITCHA2026.GroovyfyMusic.repository.UsuarioRepository;
-import com.mpatric.mp3agic.Mp3File; // 🟢 Importado mp3agic
+import com.ITCHA2026.GroovyfyMusic.repository.*;
+import com.mpatric.mp3agic.Mp3File;
+import org.springframework.data.domain.PageRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +35,7 @@ public class CancionService implements ICancionService {
     private final GeneroRepository generoRepository;
     private final CancionMapper cancionMapper;
     private final CloudinaryService cloudinaryService;
+    private final ReproduccionRepository reproduccionRepository;
 
     @Override
     @Transactional
@@ -250,5 +251,20 @@ public class CancionService implements ICancionService {
                 tempFile.delete();
             }
         }
+    }
+
+    @Transactional(readOnly = true)
+    public List<CancionPopularDTO> findPopularesByArtista(Integer artistaId, int limit) {
+        List<ICancionPopular> proyecciones = cancionRepository.findPopularesByArtistaId(artistaId, PageRequest.of(0, limit));
+        return proyecciones.stream()
+                .map(p -> new CancionPopularDTO(
+                        p.getId(),
+                        p.getNombre(),
+                        p.getDuracionSegundos(),
+                        p.getPortada(),
+                        p.getArchivoAudio(),
+                        p.getReproducciones()
+                ))
+                .toList();
     }
 }

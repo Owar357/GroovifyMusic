@@ -48,6 +48,12 @@ public class AlbumService implements IAlbumService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<AlbumResponseDTO> search(String nombre) {
+        return mapper.toResponseDTOList(repository.findByNombreContainingIgnoreCase(nombre));
+    }
+
+    @Override
     @Transactional
     public AlbumResponseDTO save(AlbumRegisterDTO albumRegisterDTO, MultipartFile file) {
         Usuario artista = usuarioRepository.findById(albumRegisterDTO.getArtistaId())

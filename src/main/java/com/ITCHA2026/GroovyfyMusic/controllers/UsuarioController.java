@@ -11,6 +11,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/usuarios")
 @RequiredArgsConstructor
@@ -25,20 +27,26 @@ public class UsuarioController {
         return ResponseEntity.ok(response);
     }
 
-    @PreAuthorize("isAuthenticated()")
-    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<UsuarioResponseDTO> update(
-            @PathVariable Integer id,
-            @RequestPart("usuario") UsuarioRegistroDTO dto,
-            @RequestPart(value = "imagen", required = false) MultipartFile imagen) {
-        UsuarioResponseDTO response = usuarioService.update(id, dto, imagen);
-        return ResponseEntity.ok(response);
-    }
+        @PreAuthorize("isAuthenticated()")
+        @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+        public ResponseEntity<UsuarioResponseDTO> update(
+                @PathVariable Integer id,
+                @RequestPart("usuario") UsuarioRegistroDTO dto,
+                @RequestPart(value = "imagen", required = false) MultipartFile imagen) {
+            UsuarioResponseDTO response = usuarioService.update(id, dto, imagen);
+            return ResponseEntity.ok(response);
+        }
 
     @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         usuarioService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/search")
+    public ResponseEntity<List<UsuarioResponseDTO>> search(@RequestParam String alias) {
+        return ResponseEntity.ok(usuarioService.searchArtistas(alias));
     }
 }
