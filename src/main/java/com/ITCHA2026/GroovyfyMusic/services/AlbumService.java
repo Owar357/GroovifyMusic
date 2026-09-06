@@ -33,13 +33,13 @@ public class AlbumService implements IAlbumService {
         return mapper.toResponseDTOList(repository.findAll());
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public AlbumResponseDTO findById(Integer id) {
-        Album album = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("No se encontró el álbum con ID: " + id));
-        return mapper.toResponseDTO(album);
-    }
+        @Override
+        @Transactional(readOnly = true)
+        public AlbumResponseDTO findById(Integer id) {
+            Album album = repository.findById(id)
+                    .orElseThrow(() -> new ResourceNotFoundException("No se encontró el álbum con ID: " + id));
+            return mapper.toResponseDTO(album);
+        }
 
     @Override
     @Transactional(readOnly = true)
