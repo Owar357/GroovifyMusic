@@ -1,6 +1,7 @@
 package com.ITCHA2026.GroovyfyMusic.interfaces;
 
 import com.ITCHA2026.GroovyfyMusic.dto.CancionFiltroDTO;
+import com.ITCHA2026.GroovyfyMusic.dto.CancionPopularDTO;
 import com.ITCHA2026.GroovyfyMusic.dto.CancionRegistroDTO;
 import com.ITCHA2026.GroovyfyMusic.dto.CancionResponseDTO;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,6 +20,8 @@ public interface ICancionService {
     List<CancionResponseDTO> search(CancionFiltroDTO filtro);
 
     List<CancionResponseDTO> findByAlbumId(Integer albumId);
+
+    List<CancionPopularDTO> findPopularesByArtista(Integer artistaId, int limit);
 
     void delete(Integer id);
 }

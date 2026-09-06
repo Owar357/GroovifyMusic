@@ -39,6 +39,13 @@ public class AlbumController {
             return ResponseEntity.ok(iservice.findByArtistaId(artistaId));
         }
 
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/album/search")
+    public ResponseEntity<List<AlbumResponseDTO>> search(@RequestParam String nombre) {
+        return ResponseEntity.ok(iservice.search(nombre));
+    }
+
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/album/{id}")
     public ResponseEntity<AlbumResponseDTO> findById(@PathVariable Integer id) {

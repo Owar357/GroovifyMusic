@@ -1,6 +1,7 @@
 package com.ITCHA2026.GroovyfyMusic.controllers;
 
 import com.ITCHA2026.GroovyfyMusic.dto.CancionFiltroDTO;
+import com.ITCHA2026.GroovyfyMusic.dto.CancionPopularDTO;
 import com.ITCHA2026.GroovyfyMusic.dto.CancionRegistroDTO;
 import com.ITCHA2026.GroovyfyMusic.dto.CancionResponseDTO;
 import com.ITCHA2026.GroovyfyMusic.security.AuthenticatedUser;
@@ -75,6 +76,20 @@ public class CancionController {
         CancionResponseDTO response = cancionService.update(id, dto, portada, archivoAudio);
         return ResponseEntity.ok(response);
     }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/artista/{artistaId}/populares")
+    public ResponseEntity<List<CancionPopularDTO>> obtenerPopulares(
+            @PathVariable Integer artistaId,
+            @RequestParam(defaultValue = "5") int limit) {
+
+        if (limit <= 0) {
+            limit = 10;
+        }
+
+        return ResponseEntity.ok(cancionService.findPopularesByArtista(artistaId, limit));
+    }
+
 
     @PreAuthorize("hasRole('ARTISTA')")
     @DeleteMapping("/{id}")
