@@ -21,6 +21,8 @@ public interface ICancionService {
 
     List<CancionResponseDTO> findByAlbumId(Integer albumId);
 
+    List<CancionPopularDTO> findPopulares(int limit);
+
     List<CancionPopularDTO> findPopularesByArtista(Integer artistaId, int limit);
 
     void delete(Integer id);

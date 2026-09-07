@@ -41,17 +41,21 @@ public class CancionController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @GetMapping("/{id}")
-    public ResponseEntity<CancionResponseDTO> findById(@PathVariable Integer id) {
-        CancionResponseDTO response = cancionService.findById(id);
-        return ResponseEntity.ok(response);
+    @GetMapping("/populares")
+    public ResponseEntity<List<CancionPopularDTO>> obtenerPopulares(
+            @RequestParam(defaultValue = "8") int limit) {
+        return ResponseEntity.ok(cancionService.findPopulares(limit));
     }
 
     @PreAuthorize("isAuthenticated()")
-    @GetMapping
-    public ResponseEntity<List<CancionResponseDTO>> findAll() {
-        List<CancionResponseDTO> response = cancionService.findAll();
-        return ResponseEntity.ok(response);
+    @GetMapping("/artista/{artistaId}/populares")
+    public ResponseEntity<List<CancionPopularDTO>> obtenerPopularesPorArtista(
+            @PathVariable Integer artistaId,
+            @RequestParam(defaultValue = "5") int limit) {
+        if (limit <= 0) {
+            limit = 10;
+        }
+        return ResponseEntity.ok(cancionService.findPopularesByArtista(artistaId, limit));
     }
 
     @GetMapping("/album/{albumId}")
@@ -66,6 +70,20 @@ public class CancionController {
         return ResponseEntity.ok(response);
     }
 
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping
+    public ResponseEntity<List<CancionResponseDTO>> findAll() {
+        List<CancionResponseDTO> response = cancionService.findAll();
+        return ResponseEntity.ok(response);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/{id}")
+    public ResponseEntity<CancionResponseDTO> findById(@PathVariable Integer id) {
+        CancionResponseDTO response = cancionService.findById(id);
+        return ResponseEntity.ok(response);
+    }
+
     @PreAuthorize("hasRole('ARTISTA')")
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<CancionResponseDTO> update(
@@ -77,26 +95,11 @@ public class CancionController {
         return ResponseEntity.ok(response);
     }
 
-    @PreAuthorize("isAuthenticated()")
-    @GetMapping("/artista/{artistaId}/populares")
-    public ResponseEntity<List<CancionPopularDTO>> obtenerPopulares(
-            @PathVariable Integer artistaId,
-            @RequestParam(defaultValue = "5") int limit) {
-
-        if (limit <= 0) {
-            limit = 10;
-        }
-
-        return ResponseEntity.ok(cancionService.findPopularesByArtista(artistaId, limit));
-    }
-
-
     @PreAuthorize("hasRole('ARTISTA')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         cancionService.delete(id);
         return ResponseEntity.noContent().build();
     }
-
 
 }

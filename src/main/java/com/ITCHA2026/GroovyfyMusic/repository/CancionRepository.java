@@ -30,6 +30,15 @@ public interface CancionRepository extends JpaRepository<Cancion, Integer> {
             "ORDER BY COUNT(r.id) DESC")
     List<ICancionPopular> findPopularesByArtistaId(@Param("artistaId") Integer artistaId, Pageable pageable);
 
+
+    @Query("SELECT c.id as id, c.nombre as nombre, c.duracionSegundos as duracionSegundos, " +
+            "c.portada as portada, c.archivoAudio as archivoAudio, COUNT(r.id) as reproducciones " +
+            "FROM Cancion c " +
+            "LEFT JOIN Reproduccion r ON r.cancion.id = c.id " +
+            "GROUP BY c.id, c.nombre, c.duracionSegundos, c.portada, c.archivoAudio " +
+            "ORDER BY COUNT(r.id) DESC")
+    List<ICancionPopular> findPopulares(Pageable pageable);
+
     List<Cancion> findByAlbumId(Integer albumId);
 
     @Query("SELECT COALESCE(SUM(c.duracionSegundos), 0) FROM Cancion c WHERE c.album.id = :albumId")

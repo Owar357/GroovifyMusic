@@ -4,10 +4,8 @@ import com.ITCHA2026.GroovyfyMusic.dto.CancionFiltroDTO;
 import com.ITCHA2026.GroovyfyMusic.dto.CancionPopularDTO;
 import com.ITCHA2026.GroovyfyMusic.dto.CancionRegistroDTO;
 import com.ITCHA2026.GroovyfyMusic.dto.CancionResponseDTO;
-import com.ITCHA2026.GroovyfyMusic.entities.Album;
-import com.ITCHA2026.GroovyfyMusic.entities.Cancion;
-import com.ITCHA2026.GroovyfyMusic.entities.Genero;
-import com.ITCHA2026.GroovyfyMusic.entities.Usuario;
+import com.ITCHA2026.GroovyfyMusic.entities.*;
+import com.ITCHA2026.GroovyfyMusic.enums.TipoPlaylist;
 import com.ITCHA2026.GroovyfyMusic.exceptions.ConflictException;
 import com.ITCHA2026.GroovyfyMusic.exceptions.ResourceNotFoundException;
 import com.ITCHA2026.GroovyfyMusic.interfaces.ICancionPopular;
@@ -25,6 +23,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+
 @Service
 @RequiredArgsConstructor
 public class CancionService implements ICancionService {
@@ -36,6 +35,7 @@ public class CancionService implements ICancionService {
     private final CancionMapper cancionMapper;
     private final CloudinaryService cloudinaryService;
     private final ReproduccionRepository reproduccionRepository;
+    private  final  PlaylistRepository playlistRepository;
 
     @Override
     @Transactional
@@ -200,6 +200,36 @@ public class CancionService implements ICancionService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<CancionPopularDTO> findPopulares(int limit) {
+        List<ICancionPopular> proyecciones = cancionRepository.findPopulares(PageRequest.of(0, limit));
+        return mapearAPopularDTO(proyecciones);
+    }
+
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<CancionPopularDTO> findPopularesByArtista(Integer artistaId, int limit) {
+        List<ICancionPopular> proyecciones = cancionRepository.findPopularesByArtistaId(artistaId, PageRequest.of(0, limit));
+        return mapearAPopularDTO(proyecciones);
+    }
+
+
+    private List<CancionPopularDTO> mapearAPopularDTO(List<ICancionPopular> proyecciones) {
+        return proyecciones.stream()
+                .map(p -> new CancionPopularDTO(
+                        p.getId(),
+                        p.getNombre(),
+                        p.getDuracionSegundos(),
+                        p.getPortada(),
+                        p.getArchivoAudio(),
+                        p.getReproducciones()
+                ))
+                .toList();
+    }
+
+    @Override
     @Transactional
     public void delete(Integer id) {
         Cancion cancion = cancionRepository.findById(id)
@@ -253,18 +283,5 @@ public class CancionService implements ICancionService {
         }
     }
 
-    @Transactional(readOnly = true)
-    public List<CancionPopularDTO> findPopularesByArtista(Integer artistaId, int limit) {
-        List<ICancionPopular> proyecciones = cancionRepository.findPopularesByArtistaId(artistaId, PageRequest.of(0, limit));
-        return proyecciones.stream()
-                .map(p -> new CancionPopularDTO(
-                        p.getId(),
-                        p.getNombre(),
-                        p.getDuracionSegundos(),
-                        p.getPortada(),
-                        p.getArchivoAudio(),
-                        p.getReproducciones()
-                ))
-                .toList();
-    }
+
 }
