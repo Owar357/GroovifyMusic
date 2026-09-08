@@ -11,9 +11,11 @@ import com.ITCHA2026.GroovyfyMusic.repository.UsuarioRepository;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
+import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -22,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ReporteArtistaService {
@@ -32,8 +35,11 @@ public class ReporteArtistaService {
     private static final float CM = 28.3465f;
     private static final DateTimeFormatter FORMATO_FECHA = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-    // Color morado de la marca Groovify (reemplaza el verde de Spotify)
+    // Color morado de la marca Groovify
     private static final BaseColor COLOR_PRIMARIO = new BaseColor(154, 69, 242);
+
+    // URL pública de la marca de agua en Cloudinary
+    private static final String CLOUDINARY_LOGO_URL = "https://res.cloudinary.com/ddfgborfk/image/upload/v1788889456/marca_de_agua_y7ergh.png";
 
     public byte[] generarReporte(Integer artistaId, LocalDate fechaInicio, LocalDate fechaFin) {
         if (fechaInicio == null || fechaFin == null) {
@@ -81,7 +87,9 @@ public class ReporteArtistaService {
             PdfWriter writer = PdfWriter.getInstance(document, salida);
 
             String fechaGeneracion = LocalDate.now().format(FORMATO_FECHA);
-            writer.setPageEvent(new FooterEvent(fechaGeneracion));
+
+            // Asignamos el evento que maneja pie de página Y marca de agua
+            writer.setPageEvent(new ReportePageEvent(fechaGeneracion));
 
             document.open();
             agregarEncabezado(document, artista.getAlias(), fechaInicio, fechaFin);
@@ -91,6 +99,7 @@ public class ReporteArtistaService {
             document.close();
             return salida.toByteArray();
         } catch (DocumentException e) {
+            log.error("Error al generar el PDF del reporte", e);
             throw new RuntimeException("Error al generar el PDF del reporte", e);
         }
     }
@@ -103,15 +112,16 @@ public class ReporteArtistaService {
         celdaTexto.setBorder(Rectangle.NO_BORDER);
         celdaTexto.setVerticalAlignment(Element.ALIGN_MIDDLE);
 
-        Font fontEmpresa = new Font(Font.FontFamily.HELVETICA, 16, Font.BOLD, COLOR_PRIMARIO);
-        celdaTexto.addElement(new Paragraph("Groovyfy Music - Panel de Artista", fontEmpresa));
+        // --- Título simplificado a solo "Groovify" ---
+        Font fontEmpresa = new Font(Font.FontFamily.HELVETICA, 22, Font.BOLD, COLOR_PRIMARIO);
+        celdaTexto.addElement(new Paragraph("Groovify", fontEmpresa));
 
-        Font fontTitulo = new Font(Font.FontFamily.HELVETICA, 14, Font.BOLD, BaseColor.BLACK);
+        Font fontTitulo = new Font(Font.FontFamily.HELVETICA, 13, Font.BOLD, BaseColor.BLACK);
         Paragraph titulo = new Paragraph("Reporte de Reproducciones: " + nombreArtista, fontTitulo);
         titulo.setSpacingBefore(2);
         celdaTexto.addElement(titulo);
 
-        Font fontSubTitulo = new Font(Font.FontFamily.HELVETICA, 12, Font.NORMAL, BaseColor.GRAY);
+        Font fontSubTitulo = new Font(Font.FontFamily.HELVETICA, 11, Font.NORMAL, BaseColor.GRAY);
         Paragraph rango = new Paragraph("Período: " + fechaInicio.format(FORMATO_FECHA) + " - " + fechaFin.format(FORMATO_FECHA), fontSubTitulo);
         rango.setSpacingBefore(2);
         celdaTexto.addElement(rango);
@@ -195,15 +205,42 @@ public class ReporteArtistaService {
         return celda;
     }
 
-    private static class FooterEvent extends PdfPageEventHelper {
+
+    private static class ReportePageEvent extends PdfPageEventHelper {
         private final String fechaGeneracion;
 
-        FooterEvent(String fechaGeneracion) {
+        ReportePageEvent(String fechaGeneracion) {
             this.fechaGeneracion = fechaGeneracion;
         }
 
         @Override
         public void onEndPage(PdfWriter writer, Document document) {
+            // 1. DIBUJAR MARCA DE AGUA (FONDO)
+            try {
+                Image logo = Image.getInstance(new URL(CLOUDINARY_LOGO_URL));
+
+                PdfContentByte backgroundCanvas = writer.getDirectContentUnder();
+                PdfGState gState = new PdfGState();
+                gState.setFillOpacity(0.12f); // Opacidad del 12%
+                backgroundCanvas.setGState(gState);
+
+                float pageWidth = document.getPageSize().getWidth();
+                float pageHeight = document.getPageSize().getHeight();
+
+                logo.scaleToFit(pageWidth * 0.55f, pageHeight * 0.55f);
+
+                float x = (pageWidth - logo.getScaledWidth()) / 2;
+                float y = (pageHeight - logo.getScaledHeight()) / 2;
+                logo.setAbsolutePosition(x, y);
+
+                backgroundCanvas.addImage(logo);
+
+            } catch (Exception e) {
+                // Si la imagen falla en cargar, el PDF aún se genera sin la marca de agua
+                log.error("No se pudo cargar la marca de agua de Cloudinary", e);
+            }
+
+            // 2. DIBUJAR PIE DE PÁGINA
             PdfContentByte cb = writer.getDirectContent();
             Font fontFooter = new Font(Font.FontFamily.HELVETICA, 8, Font.NORMAL, BaseColor.GRAY);
 
